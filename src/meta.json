@@ -1,0 +1,21 @@
+{
+    "namespace": "https://github.com/marktaiwan/",
+    "homepageURL": "https://github.com/marktaiwan/Philomena-Imgur-Embed",
+    "supportURL": "https://github.com/marktaiwan/Philomena-Imgur-Embed/issues",
+    "match": [
+        "https://*.ponybooru.org/*",
+        "https://*.ponerpics.com/*",
+        "https://*.ponerpics.org/*",
+        "https://*.derpibooru.org/*",
+        "https://*.trixiebooru.org/*",
+        "https://*.twibooru.org/*"
+    ],
+    "grant": [
+        "GM_xmlhttpRequest"
+    ],
+    "require": [
+        "https://raw.githubusercontent.com/soufianesakhi/node-creation-observer-js/master/release/node-creation-observer-1.2.js"
+    ],
+    "inject-into": "content",
+    "noframes": true
+}
