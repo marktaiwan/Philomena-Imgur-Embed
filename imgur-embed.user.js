@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Philomena Imgur Embed
 // @description Upload and embed images directly from the comment form
-// @version     1.0.0
+// @version     1.0.1
 // @author      Marker
 // @license     MIT
 // @namespace   https://github.com/marktaiwan/
@@ -13,7 +13,7 @@
 // @match       https://*.derpibooru.org/*
 // @match       https://*.trixiebooru.org/*
 // @match       https://*.twibooru.org/*
-// @require     https://raw.githubusercontent.com/soufianesakhi/node-creation-observer-js/master/release/node-creation-observer-1.2.js
+// @require     https://raw.githubusercontent.com/soufianesakhi/node-creation-observer-js/master/release/node-creation-observer-latest.js
 // @inject-into content
 // @noframes
 // @grant       GM_xmlhttpRequest
