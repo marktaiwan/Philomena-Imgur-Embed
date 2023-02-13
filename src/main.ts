@@ -4,13 +4,53 @@ import {$, create} from './util';
 
 declare const NodeCreationObserver: NodeCreationObserverInterface;
 
+type Boorus = {[name: string]: BooruRecord};
+type BooruRecord = {
+  booruDomains: string[],
+  syntax: 'textile' | 'markdown',
+}
+
 const CLIENT_ID = '7e765c56f350231';
 const API_ENDPOINT = 'https://api.imgur.com/3/image';
+
+const boorus: Boorus = {
+  ponybooru: {
+    booruDomains: ['ponybooru.org'],
+    syntax: 'markdown',
+  },
+  ponerpics: {
+    booruDomains: ['ponerpics.org', 'ponerpics.com'],
+    syntax: 'textile'
+  },
+  twibooru: {
+    booruDomains: ['twibooru.org', 'twibooru.com'],
+    syntax: 'markdown'
+  },
+  derpibooru: {
+    booruDomains: ['derpibooru.org', 'trixiebooru.org', 'ronxgr5zb4dkwdpt.onion'],
+    syntax: 'markdown'
+  },
+};
 
 enum IconState {
   idle,
   loading,
   error,
+}
+
+function getSiteSyntax(): BooruRecord['syntax'] {
+  const host = window.location.host;
+  for (const booru of Object.values(boorus)) {
+    if (booru.booruDomains.indexOf(host) >= 0) return booru.syntax;
+  }
+  throw new Error('Unable to match domain');
+}
+
+function wrapLink(link: string): string {
+  switch (getSiteSyntax()) {
+    case 'textile': return `!${link}!`;
+    case 'markdown': return `![](${link})`;
+  }
 }
 
 function getFile(): Promise<File | null> {
@@ -118,7 +158,7 @@ async function buttonClickHandler(e: MouseEvent): Promise<void> {
   try {
     const base64EncodedImage = await getBase64(image);
     const imageLink = await uploadFile(base64EncodedImage, image.name);
-    insertString(`!${imageLink}!`, textfield);
+    insertString(wrapLink(imageLink), textfield);
     setIcon(imgurButton, IconState.idle);
     imgurButton.disabled = false;
   } catch (e) {

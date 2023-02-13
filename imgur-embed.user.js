@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Philomena Imgur Embed
 // @description Upload and embed images directly from the comment form
-// @version     1.0.1
+// @version     1.0.2
 // @author      Marker
 // @license     MIT
 // @namespace   https://github.com/marktaiwan/
@@ -31,12 +31,45 @@
 
   const CLIENT_ID = '7e765c56f350231';
   const API_ENDPOINT = 'https://api.imgur.com/3/image';
+  const boorus = {
+    ponybooru: {
+      booruDomains: ['ponybooru.org'],
+      syntax: 'markdown',
+    },
+    ponerpics: {
+      booruDomains: ['ponerpics.org', 'ponerpics.com'],
+      syntax: 'textile',
+    },
+    twibooru: {
+      booruDomains: ['twibooru.org', 'twibooru.com'],
+      syntax: 'markdown',
+    },
+    derpibooru: {
+      booruDomains: ['derpibooru.org', 'trixiebooru.org', 'ronxgr5zb4dkwdpt.onion'],
+      syntax: 'markdown',
+    },
+  };
   var IconState;
   (function (IconState) {
     IconState[(IconState['idle'] = 0)] = 'idle';
     IconState[(IconState['loading'] = 1)] = 'loading';
     IconState[(IconState['error'] = 2)] = 'error';
   })(IconState || (IconState = {}));
+  function getSiteSyntax() {
+    const host = window.location.host;
+    for (const booru of Object.values(boorus)) {
+      if (booru.booruDomains.indexOf(host) >= 0) return booru.syntax;
+    }
+    throw new Error('Unable to match domain');
+  }
+  function wrapLink(link) {
+    switch (getSiteSyntax()) {
+      case 'textile':
+        return `!${link}!`;
+      case 'markdown':
+        return `![](${link})`;
+    }
+  }
   function getFile() {
     return new Promise(resolve => {
       const filePicker = create('input');
@@ -136,7 +169,7 @@
     try {
       const base64EncodedImage = await getBase64(image);
       const imageLink = await uploadFile(base64EncodedImage, image.name);
-      insertString(`!${imageLink}!`, textfield);
+      insertString(wrapLink(imageLink), textfield);
       setIcon(imgurButton, IconState.idle);
       imgurButton.disabled = false;
     } catch (e) {
